@@ -30,6 +30,7 @@ interface CandyMachineState {
   itemsRedeemed: number;
   itemsRemaining: number;
   goLiveDate: Date,
+  price: number,
 }
 
 export const awaitTransactionSignatureConfirmation = async (
@@ -165,7 +166,7 @@ export const getCandyMachineState = async (
     provider
   );
 
-  const program = new anchor.Program(idl, CANDY_MACHINE_PROGRAM, provider);
+  const program = new anchor.Program(idl, CANDY_MACHINE_PROGRAM, provider,);
   const candyMachine = {
     id: candyMachineId,
     connection,
@@ -179,6 +180,7 @@ export const getCandyMachineState = async (
 
   let goLiveDate = state.data.goLiveDate.toNumber();
   goLiveDate = new Date(goLiveDate * 1000);
+  const price = state.data.price.toNumber() * 0.000000001;
 
   return {
     candyMachine,
@@ -186,6 +188,7 @@ export const getCandyMachineState = async (
     itemsRedeemed,
     itemsRemaining,
     goLiveDate,
+    price
   };
 }
 

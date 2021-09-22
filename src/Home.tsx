@@ -18,6 +18,8 @@ import {
   mintOneToken,
   shortenAddress,
 } from "./candy-machine";
+// import HeroSection from "./components/HeroSection";
+// import Footer from "./components/Footer"; 
 
 const ConnectButton = styled(WalletDialogButton)``;
 
@@ -41,6 +43,8 @@ const Home = (props: HomeProps) => {
   const [isActive, setIsActive] = useState(false); // true when countdown completes
   const [isSoldOut, setIsSoldOut] = useState(false); // true when items remaining is zero
   const [isMinting, setIsMinting] = useState(false); // true when user got to press MINT
+  const [counter, setCounter] = useState<any>({});
+  const [price, setPrice] = useState<number | null>(null);
 
   const [alertState, setAlertState] = useState<AlertState>({
     open: false,
@@ -145,12 +149,18 @@ const Home = (props: HomeProps) => {
         signTransaction: wallet.signTransaction,
       } as anchor.Wallet;
 
-      const { candyMachine, goLiveDate, itemsRemaining } =
+      const { candyMachine, goLiveDate, itemsRemaining, itemsAvailable, price } =
         await getCandyMachineState(
           anchorWallet,
           props.candyMachineId,
-          props.connection
+          props.connection,
         );
+
+        setCounter({
+          itemsRemaining,
+          itemsAvailable
+        });
+        setPrice(price);
 
       setIsSoldOut(itemsRemaining === 0);
       setStartDate(goLiveDate);
@@ -168,6 +178,19 @@ const Home = (props: HomeProps) => {
         <p>Balance: {(balance || 0).toLocaleString()} SOL</p>
       )}
 
+      {!!counter && (
+        <>
+          Items available: {counter.itemsRemaining} / {counter.itemsAvailable}
+          <br />
+          <br />
+          <br />
+          <br />
+        </>
+      )}  
+
+      {/* <HeroSection /> */}
+      {/* <Cards /> */}
+      
       <MintContainer>
         {!wallet.connected ? (
           <ConnectButton>Connect Wallet</ConnectButton>
@@ -182,9 +205,9 @@ const Home = (props: HomeProps) => {
             ) : isActive ? (
               isMinting ? (
                 <CircularProgress />
-              ) : (
-                "MINT"
-              )
+                ) : (
+                  `MINT FOR ${price} SOL ⛏`
+                )
             ) : (
               <Countdown
                 date={startDate}
@@ -209,6 +232,7 @@ const Home = (props: HomeProps) => {
           {alertState.message}
         </Alert>
       </Snackbar>
+      
     </main>
   );
 };

@@ -2,6 +2,7 @@ import "./App.css";
 import { useMemo } from "react";
 
 import Home from "./Home";
+import MainPage from "./components/pages/MainPage";
 
 import * as anchor from "@project-serum/anchor";
 import { clusterApiUrl } from "@solana/web3.js";
@@ -18,6 +19,8 @@ import {
 } from "@solana/wallet-adapter-react";
 
 import { WalletDialogProvider } from "@solana/wallet-adapter-material-ui";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import Navbar from "./components/NavBar.";
 
 const treasury = new anchor.web3.PublicKey(
   process.env.REACT_APP_TREASURY_ADDRESS!
@@ -49,20 +52,29 @@ const App = () => {
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <WalletDialogProvider>
-          <Home
-            candyMachineId={candyMachineId}
-            config={config}
-            connection={connection}
-            startDate={startDateSeed}
-            treasury={treasury}
-            txTimeout={txTimeout}
-          />
-        </WalletDialogProvider>
-      </WalletProvider>
-    </ConnectionProvider>
+    <>
+      <Router>
+        <Navbar />
+        <Switch>
+          <Route path='/' exact component={ MainPage } />
+        </Switch>
+        {/* <ConnectionProvider endpoint={endpoint}>
+          <WalletProvider wallets={wallets} autoConnect>
+          <WalletDialogProvider>
+            <Home
+              candyMachineId={candyMachineId}
+              config={config}
+              connection={connection}
+              startDate={startDateSeed}
+              treasury={treasury}
+              txTimeout={txTimeout}
+            />
+          </WalletDialogProvider>
+          </WalletProvider>
+        </ConnectionProvider> */}
+      </Router>
+    </>
+    
   );
 };
 
